@@ -40,6 +40,9 @@ user_manager = UserManager(data_root=DATA_ROOT, embedding_backend="ollama")
 class AskRequest(BaseModel):
     question: str
 
+class ChatRequest(BaseModel):
+    user_id: str
+    message: str
 # =========================
 # Admin routes
 # =========================
@@ -137,12 +140,9 @@ def login(email: str = Form(...)):
 def chat_page(request: Request, user_email: str):
     return templates.TemplateResponse("chat.html", {"request": request, "user_email": user_email})
 
-
 rag_engine = ThinkpalmCosmosRAGmethod2(COSMOS_ENDPOINT, COSMOS_KEY, COSMOS_DATABASE, COSMOS_CONTAINER, CHAT_CONTAINER)
 
-class ChatRequest(BaseModel):
-    user_id: str
-    message: str
+
 
 @app.post("/ask")
 async def ask_question(req: AskRequest, user_email: str = Depends(get_user_from_header)):
